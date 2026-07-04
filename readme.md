@@ -52,6 +52,11 @@ Accordingly subject here is the allowed Boolean Algebra operations:
       <td>A right shift by n positions appends n zeros to the left of the binary number, effectively dividing its value by 2^n.
       </td>
     </tr>
+    <tr>
+      <td>Left Shift Operators</td>
+      <td><<</td>
+      <td>A left shift by n positions appends n zeros to the right of the binary number, effectively multiplying its value by 2^n.
+      </td>
   </tbody>
 </table>
 
