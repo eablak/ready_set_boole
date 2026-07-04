@@ -10,6 +10,10 @@ def check_input(input: str) -> bool:
             boolean += 1
         elif char == "&" or char == "|" or char == "^" or char == ">" or char == "=":
             expression += 1
+        elif char == "!":
+            pass
+        else:
+            return False
 
     if (expression+1) == boolean:
         return True
