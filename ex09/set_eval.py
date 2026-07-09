@@ -16,75 +16,56 @@ def check_input(input: str) -> bool:
     return False
 
 
+def find_universe(sets):
+
+    all = set()
+    for _set in sets:
+        for element in _set:
+            all.add(element)
+
+    return all
+
+
 def evaluate(node, sets):
 
     left_child = ""
     right_child = ""
 
     if node.data.isalpha():
-        node.data = sets[65 - ord(node.data)]
-        return node
-    elif node.data == "!":
+        return sets[ord(node.data) - 65]
+
+    elif node.data == "!": # change
+
+        universe = find_universe(sets)
         left_child = evaluate(node.left, sets)
 
-        globally = []
-        for _set in sets:
-            for i in _set:
-                globally.append(i)
-
-        external = globally.copy()
-        for b in left_child.data:
-            if b in globally:
-                external.remove(b)
-
-        return set(external)
+        return universe - set(left_child)
     else:
         left_child = evaluate(node.left, sets)
         right_child = evaluate(node.right, sets)
     
-    if node.data == "|":
-        return (left_child.data | right_child.data)
-    elif node.data == "&":
-        return (left_child.data & right_child.data)
-    elif node.data == "^":
-        return (left_child.data ^ right_child.data)
-    elif node.data == ">":
+    if node.data == "|": # ok
+        return (set(left_child) | set(right_child))
+    elif node.data == "&": # ok
+        return (set(left_child) & set(right_child))
+    elif node.data == "^": # ok
+        return (set(left_child) ^ set(right_child))
+    elif node.data == ">": # change
+        universe = find_universe(sets)
+        return ((universe - set(left_child)) | right_child)
+    elif node.data == "=": # change
+        # (A ∧ B) ∨ (!A ∧ !B)
 
-        globally = []
-        for _set in sets:
-            for i in _set:
-                globally.append(i)
+        universe = find_universe(sets)
+        comp_left = universe - set(left_child)
+        comp_right = universe - set(right_child)
 
-        external = globally.copy()
-        for b in left_child.data:
-            if b in globally:
-                external.remove(b)
+        first_equ = set(left_child) & set(right_child)
+        second_equ = comp_left & comp_right
 
-        return (external | right_child.data)
+        return first_equ | second_equ
 
-    elif node.data == "=":
 
-        globally = []
-        for _set in sets:
-            for i in _set:
-                globally.append(i)
-
-        external_left = globally.copy()
-        for b in left_child.data:
-            if b in globally:
-                external_left.remove(b)
-        
-        left_imp = external_left | right_child.data
-
-        external_right = globally.copy()
-        for b in right_child.data:
-            if b in globally:
-                external_right.remove(b)    
-
-        right_imp = external_right | left_child.data
-
-        return (left_imp & right_imp)
-        
 
 def eval_set(formula: str, sets)-> int:
 
@@ -97,9 +78,9 @@ def eval_set(formula: str, sets)-> int:
 
 if __name__ == "__main__":
 
-    sets = [{42}]
+    sets = [{0}, {0}, {0}]
 
-    if check_input("A"):
-        print(eval_set("A", sets))
+    if check_input("ABC>>"):
+        print(eval_set("ABC>>", sets))
     else:
         print("Error: Wrong formula is invalid!")
